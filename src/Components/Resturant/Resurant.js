@@ -10,7 +10,7 @@ const [meals, Setmeals] = useState([])
     .then(res=> res.json())
     .then(data => Setmeals(data.meals))
 
-},[])
+},[searcheText])
       const searchFood = eventName =>{
         setsearcheText(eventName.target.value);
         }
@@ -21,7 +21,7 @@ const [meals, Setmeals] = useState([])
             <input className='font-bold py-2 px-5 mt-3' type="text" onChange={searchFood} />
             <h3 className='mt-4'>{meals.length}</h3>
 
-            <div>
+            <div className='grid grid-cols-4'>
                 {
                     meals.map(perMeal => <EveryMeal
                     mealInfo = {perMeal}
