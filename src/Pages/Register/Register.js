@@ -1,14 +1,29 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import './Register.css'
+import { Link, useNavigate } from 'react-router-dom';
+import auth from '../../Firebase.config';
+import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import './Register.css';
 const Register = () => {
+    const [
+        createUserWithEmailAndPassword,
+        user,
+        loading,
+        error,
+      ] = useCreateUserWithEmailAndPassword(auth);
+
+      const navigate = useNavigate();
+      const navitageTo = ()=>{
+          navigate('/login');
+      }
+      if(user){
+          navigate('/home');
+      }
 const HandleRegisterForm = (event)=>{
 event.preventDefault()
  const name = event.target.name.value;
  const email = event.target.email.value;
  const password = event.target.passwword.value;
-console.log( );
-
+ createUserWithEmailAndPassword(email, password);
     }
     return (
         <div className="form_wrapper">
@@ -40,9 +55,9 @@ console.log( );
                     </div>
                   </div>
                 </div>
-                <input className="button" type="submit" value="Register" />
+                <button className="btn btn-primary w-100" type="submit">Submit</button>
               </form>
-              <p className='text-center text-danger h6'>Already Have an account? <Link to="/login" className='text-danger pointer text-decoration-none'>Please Login</Link> </p>
+              <p className='text-center text-danger h6 mt-3'>Already Have an account? <Link to="/login" className='pointer text-decoration-none' onClick={navitageTo}>Please Login</Link> </p>
             </div>
           </div>
         </div>
