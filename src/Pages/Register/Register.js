@@ -22,8 +22,8 @@ const HandleRegisterForm = (event)=>{
 event.preventDefault()
  const name = event.target.name.value;
  const email = event.target.email.value;
- const password = event.target.passwword.value;
- createUserWithEmailAndPassword(email, password);
+ const pass = event.target.password.value;
+ createUserWithEmailAndPassword(email, pass);
     }
     return (
         <div className="form_wrapper">
@@ -40,9 +40,9 @@ event.preventDefault()
                 <div className="input_field"> <span><i aria-hidden="true" className="fa fa-lock"></i></span>
                   <input type="password" name="password" placeholder="Password" required />
                 </div>
-                <div className="input_field"> <span><i aria-hidden="true" className="fa fa-lock"></i></span>
-                  <input type="password" name="password" placeholder="Re-type Password" required />
-                </div>
+              {/*   <div className="input_field"> <span><i aria-hidden="true" className="fa fa-lock"></i></span>
+                  <input type="password" name="confrimpassword" placeholder="Re-type Password" required />
+                </div> */}
                 <div className="row clearfix">
                   <div className="col_half">
                     <div className="input_field"> <span><i aria-hidden="true" className="fa fa-user"></i></span>
