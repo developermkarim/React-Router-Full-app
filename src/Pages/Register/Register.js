@@ -4,6 +4,9 @@ import auth from '../../Firebase.config';
 import { useCreateUserWithEmailAndPassword,useUpdateProfile} from 'react-firebase-hooks/auth';
 import './Register.css';
 import Loading from '../LoadingPage/Loading';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+// import { Toast } from 'react-toastify/dist/components';
 const Register = () => {
     const [agree, Setagree] = useState(false);
     const [
@@ -32,11 +35,14 @@ event.preventDefault()
  await createUserWithEmailAndPassword(email, pass);
  await updateProfile({displayName: name});
  console.log('Update Profile');
+ toast('Congrats! You are Registered')
+
  navigate('/home');
     }
     
     return (
         <div className='mt-5'>
+            
             <h2 className='text-center'>Registration Form</h2>
       <form className='w-25 mx-auto' onSubmit={HandleRegisterForm}>
   <div className="mb-3">
@@ -56,6 +62,7 @@ event.preventDefault()
   <button disabled={!agree} type="submit" className="btn btn-primary w-100">Submit</button>
 </form>
 <p className='text-center text-danger h6 mt-3'>Already Have an account? <Link to="/login" className='pointer text-decoration-none' onClick={navitageTo}>Please Login</Link> </p>
+<ToastContainer></ToastContainer>
 </div>
      
      

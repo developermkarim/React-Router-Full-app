@@ -5,7 +5,8 @@ import auth from '../../Firebase.config';
 import Loading from '../LoadingPage/Loading';
 import './Login.css'
 import SocailLink from './SocailLink/SocailLink';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -26,6 +27,9 @@ if (error) {
     errorElements =  <p className='text-danger'>Error: {error?.message}</p>
        
    }
+  /*  if(loading ){
+    <Loading></Loading>
+    } */
     const EmailRef = useRef();
     const PassRef = useRef();
     const FormHandle = event =>{
@@ -40,16 +44,15 @@ if (error) {
     const [sendPasswordResetEmail, sending] = useSendPasswordResetEmail(
         auth);
 
-        if(loading || sending){
-            return <Loading></Loading>
-        }
+       
 
     const PasswordResetHadle = async()=>{
         const email =  EmailRef.current.value;
         await sendPasswordResetEmail(email);
-        alert('Password Reset SMS sent to your Email')
+        toast('Password Reset SMS sent to your Email');
+        
     }
-   
+    
     return (
         <div  className='w-25  mx-auto'>
         <h2 className='text-center mt-5'>Sign In Form</h2>
@@ -67,7 +70,7 @@ if (error) {
     {errorElements}
       <p className='text-center text-danger mb-0'>New To Genius Car? <Link to="/register" className=' pointer text-decoration-none' onClick={NavigateTO}>Please Register</Link> </p>
       <p className='text-center text-danger mt-2 mb-0'>Forget Password? <button className=' pointer text-decoration-none btn btn-link' onClick={PasswordResetHadle}>Reset Password</button> </p>
-       
+      <ToastContainer></ToastContainer>
       <SocailLink></SocailLink>
       </div>
     );
