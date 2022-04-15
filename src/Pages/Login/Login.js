@@ -1,8 +1,10 @@
 import React, { useRef } from 'react';
-import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useSendPasswordResetEmail, useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../Firebase.config';
+import Loading from '../LoadingPage/Loading';
 import './Login.css'
+import SocailLink from './SocailLink/SocailLink';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -14,16 +16,16 @@ const Login = () => {
     const [
         signInWithEmailAndPassword,
         user,
-        loading,
         error,
+        loading,
       ] = useSignInWithEmailAndPassword(auth);
 
-
-if(user){
-    navigate(from, { replace: true });
-    
-}
-
+     
+let errorElements;
+if (error) {
+    errorElements =  <p className='text-danger'>Error: {error?.message}</p>
+       
+   }
     const EmailRef = useRef();
     const PassRef = useRef();
     const FormHandle = event =>{
@@ -32,27 +34,41 @@ if(user){
        const password =  PassRef.current.value;
       signInWithEmailAndPassword(email, password);
     }
-    
+    if(user){
+        navigate(from, { replace: true });
+    }
+    const [sendPasswordResetEmail, sending] = useSendPasswordResetEmail(
+        auth);
+
+        if(loading || sending){
+            return <Loading></Loading>
+        }
+
+    const PasswordResetHadle = async()=>{
+        const email =  EmailRef.current.value;
+        await sendPasswordResetEmail(email);
+        alert('Password Reset SMS sent to your Email')
+    }
+   
     return (
-        <div>
+        <div  className='w-25  mx-auto'>
         <h2 className='text-center mt-5'>Sign In Form</h2>
-        <form className='w-25 mx-auto' onSubmit={FormHandle}>
+        <form  onSubmit={FormHandle}>
         <div className="mb-3">
           <label for="exampleInputEmail1" className="form-label">Email address</label>
           <input type="email" className="form-control" ref={EmailRef} id="exampleInputEmail1" aria-describedby="emailHelp" required/>
-          <div id="emailHelp" className="form-text">We'll never share your email with anyone else.</div>
         </div>
         <div className="mb-3">
           <label for="exampleInputPassword1" className="form-label">Password</label>
           <input type="password" className="form-control" ref={PassRef} id="exampleInputPassword1" required/>
         </div>
-        <div className="mb-3 form-check">
-          <input type="checkbox" className="form-check-input" id="exampleCheck1"/>
-          <label className="form-check-label" for="exampleCheck1">Check me out</label>
-        </div>
         <button type="submit" className="btn btn-primary w-100">Submit</button>
       </form>
-      <p className='text-center text-danger h6'>New To Genius Car? <Link to="/register" className=' pointer text-decoration-none' onClick={NavigateTO}>Please Register</Link> </p>
+    {errorElements}
+      <p className='text-center text-danger mb-0'>New To Genius Car? <Link to="/register" className=' pointer text-decoration-none' onClick={NavigateTO}>Please Register</Link> </p>
+      <p className='text-center text-danger mt-2 mb-0'>Forget Password? <button className=' pointer text-decoration-none btn btn-link' onClick={PasswordResetHadle}>Reset Password</button> </p>
+       
+      <SocailLink></SocailLink>
       </div>
     );
 };

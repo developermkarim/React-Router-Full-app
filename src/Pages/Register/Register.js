@@ -1,67 +1,62 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import auth from '../../Firebase.config';
-import { useCreateUserWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useCreateUserWithEmailAndPassword,useUpdateProfile} from 'react-firebase-hooks/auth';
 import './Register.css';
+import Loading from '../LoadingPage/Loading';
 const Register = () => {
+    const [agree, Setagree] = useState(false);
     const [
         createUserWithEmailAndPassword,
         user,
         loading,
-        error,
-      ] = useCreateUserWithEmailAndPassword(auth);
+      ] = useCreateUserWithEmailAndPassword(auth,{sendEmailVerification:true});
+
+      const [updateProfile,updating] = useUpdateProfile(auth);
 
       const navigate = useNavigate();
       const navitageTo = ()=>{
           navigate('/login');
       }
-      if(user){
-          navigate('/home');
+      if(loading || updating){
+          return <Loading></Loading>
       }
-const HandleRegisterForm = (event)=>{
+      if(user){
+          console.log('user found', user);
+      }
+const HandleRegisterForm = async (event)=>{
 event.preventDefault()
- const name = event.target.name.value;
+ const name = event.target.myName.value;
  const email = event.target.email.value;
  const pass = event.target.password.value;
- createUserWithEmailAndPassword(email, pass);
+ await createUserWithEmailAndPassword(email, pass);
+ await updateProfile({displayName: name});
+ console.log('Update Profile');
+ navigate('/home');
     }
+    
     return (
-        <div className="form_wrapper">
-        <div className="form_container">
-          <div className="title_container">
-            <h2> Registration Form</h2>
-          </div>
-          <div className="row clearfix">
-            <div className="">
-              <form onSubmit={HandleRegisterForm}>
-                <div className="input_field"> <span><i aria-hidden="true" className="fa fa-envelope"></i></span>
-                  <input type="email" name="email" placeholder="Email" required />
-                </div>
-                <div className="input_field"> <span><i aria-hidden="true" className="fa fa-lock"></i></span>
-                  <input type="password" name="password" placeholder="Password" required />
-                </div>
-              {/*   <div className="input_field"> <span><i aria-hidden="true" className="fa fa-lock"></i></span>
-                  <input type="password" name="confrimpassword" placeholder="Re-type Password" required />
-                </div> */}
-                <div className="row clearfix">
-                  <div className="col_half">
-                    <div className="input_field"> <span><i aria-hidden="true" className="fa fa-user"></i></span>
-                      <input type="text" name="name" placeholder="First Name" />
-                    </div>
-                  </div>
-                  <div className="col_half">
-                    <div className="input_field"> <span><i aria-hidden="true" className="fa fa-user"></i></span>
-                      <input type="text" name="name" placeholder="Last Name" required />
-                    </div>
-                  </div>
-                </div>
-                <button className="btn btn-primary w-100" type="submit">Submit</button>
-              </form>
-              <p className='text-center text-danger h6 mt-3'>Already Have an account? <Link to="/login" className='pointer text-decoration-none' onClick={navitageTo}>Please Login</Link> </p>
-            </div>
-          </div>
-        </div>
-      </div>
+        <div className='mt-5'>
+            <h2 className='text-center'>Registration Form</h2>
+      <form className='w-25 mx-auto' onSubmit={HandleRegisterForm}>
+  <div className="mb-3">
+    <input type="text" className="form-control" name='myName' placeholder='Your Name' />
+    </div>
+  <div className="mb-3">
+    <input type="email" className="form-control" placeholder='Email Address' name='email'/>
+    </div>
+  <div className="mb-3">
+    <input type="password" className="form-control" name='password' placeholder='Password' />
+  </div>
+  <div className="mb-3 form-check">
+    <input  type="checkbox" name='Terms' className="form-check-input" onClick={()=>Setagree(!agree)}/>
+    {/* {agree? 'py-0 text-primary':'text-danger'}  */}
+    <label className={`pe-3 ${agree ? 'text-primary':'text-danger'}`} >Genius car Terms And Condition</label>
+  </div>
+  <button disabled={!agree} type="submit" className="btn btn-primary w-100">Submit</button>
+</form>
+<p className='text-center text-danger h6 mt-3'>Already Have an account? <Link to="/login" className='pointer text-decoration-none' onClick={navitageTo}>Please Login</Link> </p>
+</div>
      
      
     );
